@@ -1,0 +1,74 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"  // querydsl 플러그인을 추가
+	id 'java'
+}
+
+group = 'com.spring'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa  // 라이브러리 dependency를 추가
+	implementation 'com.querydsl:querydsl-jpa:5.0.0'
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-apt
+	implementation 'com.querydsl:querydsl-apt:5.0.0'
+	// https://mvnrepository.com/artifact/nz.net.ultraq.thymeleaf/thymeleaf-layout-dialect
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+	// https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity5
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
+	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+	implementation 'org.modelmapper:modelmapper:2.4.4'
+	// https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+	testImplementation 'ch.qos.logback:logback-classic:1.2.7'
+
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+//	./gradlew compileQuerydsl or gradle / other / compileQuerydsl 실행
+def querydslDir = "$buildDir/generated/querydsl" as Object // (3) querydsl에서 사용할 경로를 선언
+
+querydsl { // (4) querydsl 설정추가. JPA 사용 여부와 사용할 경로를 지정
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets { // (5) build시 사용할 sourceSet을 추가
+	main.java.srcDir querydslDir
+}
+
+configurations { // (6) querydsl이 compileClassPath를 상속하도록 설정
+	querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl { // (7) querydsl 컴파일시 사용할 옵션을 설정
+	options.annotationProcessorPath = configurations.querydsl
+}

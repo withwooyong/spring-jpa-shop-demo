@@ -1,0 +1,60 @@
+application:
+  name: shop-demo
+server:
+  port: 8080
+
+spring:
+  security:
+    user:
+      name: admin
+      password: admin
+  h2:
+    console:
+      enable: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+
+#  datasource:
+#    hikari:
+##      url: 'jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE'
+#      url: jdbc:h2:mem:testdb
+#      driver-class-name: org.h2.Driver
+#      username: sa
+#      password:
+#      maximum-pool-size: 5
+#      minimum-idle: 1
+#      pool-name: hikari
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        dialect: org.hibernate.dialect.H2Dialect
+        SQL: debug      # 로그 형식으로 쿼리 보여주기
+        show_sql: true  # # 실행되는 쿼리 콘솔 출력
+        format_sql: true  # 압축된 쿼리를 읽기 좋게 포멧
+        ddl-auto: create    # 서버 시작에 테이블 생성 validate
+        type:
+          descriptor:
+            sql: trace  # 바인드 파라미터 출력
+        default_batch_fetch_size: 1000
+  devtools:
+    livereload:
+      enable: true
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 100MB
+
+#상품 이미지 업로드 경로
+#itemImgLocation: D:/shop-demo/item
+itemImgLocation: /images
+
+#리소스 업로드 경로
+#uploadPath: file:///D:/shop-demo
+uploadPath: file:///D:/work/shop-demo/src/main/resources/static/images
+
